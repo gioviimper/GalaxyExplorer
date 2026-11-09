@@ -1,66 +1,116 @@
 import SwiftUI
 import WidgetKit
+import AppIntents
 
-// I draw the trail with shapes so it stays crisp and readable on the Lock Screen.
-// WidgetKit controls refreshes; this widget never relies on a continuous animation.
+// I keep this small interaction inside the extension, so it also works offline.
+private enum ShootingStarState {
+    static let key = "shootingStarFlight"
+    static var flight: Int { UserDefaults.standard.integer(forKey: key) }
+}
+
+struct LaunchShootingStarIntent: AppIntent {
+    static var title: LocalizedStringResource = "Launch Shooting Star"
+    static var description = IntentDescription("Send a shooting star across the widget.")
+    static var openAppWhenRun: Bool = false
+
+    func perform() async throws -> some IntentResult {
+        UserDefaults.standard.set(ShootingStarState.flight &+ 1, forKey: ShootingStarState.key)
+        // WidgetKit reloads the timeline after this interactive intent finishes.
+        return .result()
+    }
+}
+
+struct ShootingStarEntry: TimelineEntry {
+    let date: Date
+    let flight: Int
+}
+
+struct ShootingStarProvider: TimelineProvider {
+    func placeholder(in context: Context) -> ShootingStarEntry {
+        ShootingStarEntry(date: .now, flight: 0)
+    }
+
+    func getSnapshot(in context: Context, completion: @escaping (ShootingStarEntry) -> Void) {
+        completion(ShootingStarEntry(date: .now, flight: ShootingStarState.flight))
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<ShootingStarEntry>) -> Void) {
+        let entry = ShootingStarEntry(date: .now, flight: ShootingStarState.flight)
+        // I only refresh after an interaction; no timers or repeated background reloads.
+        completion(Timeline(entries: [entry], policy: .never))
+    }
+}
+
 private struct ShootingStarArtwork: View {
     var body: some View {
-        GeometryReader { geometry in
-            let width = geometry.size.width
-            let height = geometry.size.height
-            ZStack {
-                Path { path in
-                    path.move(to: CGPoint(x: width * 0.10, y: height * 0.78))
-                    path.addQuadCurve(to: CGPoint(x: width * 0.68, y: height * 0.30),
-                                      control: CGPoint(x: width * 0.35, y: height * 0.70))
-                }
-                .stroke(.primary.opacity(0.8), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-                Path { path in
-                    path.move(to: CGPoint(x: width * 0.22, y: height * 0.88))
-                    path.addLine(to: CGPoint(x: width * 0.54, y: height * 0.54))
-                }
-                .stroke(.primary.opacity(0.4), style: StrokeStyle(lineWidth: 1, lineCap: .round))
-                Image(systemName: "sparkle")
-                    .resizable().scaledToFit()
-                    .frame(width: width * 0.40, height: height * 0.40)
-                    .position(x: width * 0.70, y: height * 0.28)
-                Image(systemName: "sparkle")
-                    .resizable().scaledToFit()
-                    .frame(width: width * 0.15, height: height * 0.15)
-                    .opacity(0.65)
-                    .position(x: width * 0.26, y: height * 0.26)
-            }
+        ZStack(alignment: .trailing) {
+            // The tail fades towards the left and travels together with the star.
+            Capsule()
+                .fill(LinearGradient(colors: [.clear, .primary.opacity(0.75)],
+                                     startPoint: .leading, endPoint: .trailing))
+                .frame(width: 34, height: 2)
+                .offset(x: -12)
+            Capsule()
+                .fill(LinearGradient(colors: [.clear, .primary.opacity(0.35)],
+                                     startPoint: .leading, endPoint: .trailing))
+                .frame(width: 22, height: 1)
+                .offset(x: -16, y: 5)
+            Image(systemName: "sparkle")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 23, height: 23)
         }
-        .aspectRatio(1, contentMode: .fit)
+        .frame(width: 54, height: 34)
         .accessibilityHidden(true)
     }
 }
 
 private struct ShootingStarEntryView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let entry: ShootingStarEntry
+
     var body: some View {
-        ShootingStarArtwork()
-            .padding(4)
-            .containerBackground(for: .widget) { Color.clear }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Shooting star")
-            .accessibilityHint("Opens Galaxy Explorer")
+        Button(intent: LaunchShootingStarIntent()) {
+            GeometryReader { geometry in
+                let travel = max(0, geometry.size.width - 54)
+                ZStack(alignment: .trailing) {
+                    Color.clear
+                    ShootingStarArtwork()
+                        .id(entry.flight)
+                        // A new flight starts on the left and settles on the right.
+                        // iOS controls playback and may suppress it while the device is locked.
+                        .transition(reduceMotion ? .opacity : .asymmetric(
+                            insertion: .offset(x: -travel).combined(with: .opacity),
+                            removal: .opacity))
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .animation(reduceMotion ? nil : .easeOut(duration: 1.6), value: entry.flight)
+                .clipped()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .containerBackground(for: .widget) { Color.clear }
+        .accessibilityLabel("Shooting star")
+        .accessibilityHint("Tap to send the star from left to right")
     }
 }
 
 struct ShootingStarWidget: Widget {
     var body: some WidgetConfiguration {
-        // The shared provider already supplies an offline entry; no extra fetch is needed.
-        StaticConfiguration(kind: "ShootingStarWidget", provider: MarsProvider()) { _ in
-            ShootingStarEntryView()
+        StaticConfiguration(kind: "ShootingStarWidget", provider: ShootingStarProvider()) { entry in
+            ShootingStarEntryView(entry: entry)
         }
         .configurationDisplayName("Shooting Star")
-        .description("A little starlight for your Lock Screen. Tap to explore Mars.")
-        .supportedFamilies([.accessoryCircular])
+        .description("Tap to send a little starlight across your Lock Screen.")
+        .supportedFamilies([.accessoryRectangular])
     }
 }
 
-#Preview("Lock Screen", as: .accessoryCircular) {
+#Preview("Horizontal Lock Screen", as: .accessoryRectangular) {
     ShootingStarWidget()
 } timeline: {
-    MarsEntry.sample
+    ShootingStarEntry(date: .now, flight: 0)
+    ShootingStarEntry(date: .now.addingTimeInterval(5), flight: 1)
 }
