@@ -1,0 +1,10 @@
+import Foundation
+
+// Optional editorial content for one stable surface card.
+struct PlanetInformation: Identifiable {
+    let id: String
+    let planetName: String
+    let title: String?
+    let summary: String?
+    let detail: String?
+}

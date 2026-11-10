@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		6F46B672309E386900674987 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F46B671309E386900674987 /* WidgetKit.framework */; };
 		6F46B674309E386900674987 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F46B673309E386900674987 /* SwiftUI.framework */; };
-		6F46B67F309E386A00674987 /* MarsWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6F46B66F309E386900674987 /* MarsWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6F46B67F309E386A00674987 /* GalaxyWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6F46B66F309E386900674987 /* GalaxyWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -18,7 +18,7 @@
 			containerPortal = 6F46B64F309E288600674987 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 6F46B66E309E386900674987;
-			remoteInfo = MarsWidgetsExtension;
+			remoteInfo = GalaxyWidgetsExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -28,7 +28,7 @@
 			dstPath = "";
 			dstSubfolder = PlugIns;
 			files = (
-				6F46B67F309E386A00674987 /* MarsWidgetsExtension.appex in Embed Foundation Extensions */,
+				6F46B67F309E386A00674987 /* GalaxyWidgetsExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 		};
@@ -36,18 +36,18 @@
 
 /* Begin PBXFileReference section */
 		6F46B657309E288600674987 /* Galaxy Explorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Galaxy Explorer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6F46B66F309E386900674987 /* MarsWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MarsWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F46B66F309E386900674987 /* GalaxyWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GalaxyWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F46B671309E386900674987 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		6F46B673309E386900674987 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		6F46B680309E386A00674987 /* Exceptions for "MarsWidgets" folder in "MarsWidgetsExtension" target */ = {
+		6F46B680309E386A00674987 /* Exceptions for "GalaxyWidgets" folder in "GalaxyWidgetsExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Configuration/Info.plist,
 			);
-			target = 6F46B66E309E386900674987 /* MarsWidgetsExtension */;
+			target = 6F46B66E309E386900674987 /* GalaxyWidgetsExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -57,12 +57,12 @@
 			path = "Galaxy Explorer";
 			sourceTree = "<group>";
 		};
-		6F46B675309E386900674987 /* MarsWidgets */ = {
+		6F46B675309E386900674987 /* GalaxyWidgets */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				6F46B680309E386A00674987 /* Exceptions for "MarsWidgets" folder in "MarsWidgetsExtension" target */,
+				6F46B680309E386A00674987 /* Exceptions for "GalaxyWidgets" folder in "GalaxyWidgetsExtension" target */,
 			);
-			path = MarsWidgets;
+			path = GalaxyWidgets;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -87,7 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				6F46B659309E288600674987 /* Galaxy Explorer */,
-				6F46B675309E386900674987 /* MarsWidgets */,
+				6F46B675309E386900674987 /* GalaxyWidgets */,
 				6F46B670309E386900674987 /* Frameworks */,
 				6F46B658309E288600674987 /* Products */,
 			);
@@ -97,7 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				6F46B657309E288600674987 /* Galaxy Explorer.app */,
-				6F46B66F309E386900674987 /* MarsWidgetsExtension.appex */,
+				6F46B66F309E386900674987 /* GalaxyWidgetsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -136,9 +136,9 @@
 			productReference = 6F46B657309E288600674987 /* Galaxy Explorer.app */;
 			productType = "com.apple.product-type.application";
 		};
-		6F46B66E309E386900674987 /* MarsWidgetsExtension */ = {
+		6F46B66E309E386900674987 /* GalaxyWidgetsExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6F46B681309E386A00674987 /* Build configuration list for PBXNativeTarget "MarsWidgetsExtension" */;
+			buildConfigurationList = 6F46B681309E386A00674987 /* Build configuration list for PBXNativeTarget "GalaxyWidgetsExtension" */;
 			buildPhases = (
 				6F46B66B309E386900674987 /* Sources */,
 				6F46B66C309E386900674987 /* Frameworks */,
@@ -147,11 +147,11 @@
 			buildRules = (
 			);
 			fileSystemSynchronizedGroups = (
-				6F46B675309E386900674987 /* MarsWidgets */,
+				6F46B675309E386900674987 /* GalaxyWidgets */,
 			);
-			name = MarsWidgetsExtension;
-			productName = MarsWidgetsExtension;
-			productReference = 6F46B66F309E386900674987 /* MarsWidgetsExtension.appex */;
+			name = GalaxyWidgetsExtension;
+			productName = GalaxyWidgetsExtension;
+			productReference = 6F46B66F309E386900674987 /* GalaxyWidgetsExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -187,7 +187,7 @@
 			projectRoot = "";
 			targets = (
 				6F46B656309E288600674987 /* Galaxy Explorer */,
-				6F46B66E309E386900674987 /* MarsWidgetsExtension */,
+				6F46B66E309E386900674987 /* GalaxyWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -221,7 +221,7 @@
 /* Begin PBXTargetDependency section */
 		6F46B67E309E386A00674987 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6F46B66E309E386900674987 /* MarsWidgetsExtension */;
+			target = 6F46B66E309E386900674987 /* GalaxyWidgetsExtension */;
 			targetProxy = 6F46B67D309E386A00674987 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -358,6 +358,7 @@
 				DEVELOPMENT_TEAM = AY5YZ3LB6Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your approximate location is used to check which sky events are above your horizon. It is shared with IMCCE only when you enable local sky events.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -390,6 +391,7 @@
 				DEVELOPMENT_TEAM = AY5YZ3LB6Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your approximate location is used to check which sky events are above your horizon. It is shared with IMCCE only when you enable local sky events.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -412,7 +414,7 @@
 			};
 			name = Release;
 		};
-		6F46B682309E386A00674987 /* Debug configuration for PBXNativeTarget "MarsWidgetsExtension" */ = {
+		6F46B682309E386A00674987 /* Debug configuration for PBXNativeTarget "GalaxyWidgetsExtension" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -421,8 +423,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = AY5YZ3LB6Y;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = MarsWidgets/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = MarsWidgets;
+				INFOPLIST_FILE = GalaxyWidgets/Configuration/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Galaxy Explorer Widgets";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -442,7 +444,7 @@
 			};
 			name = Debug;
 		};
-		6F46B683309E386A00674987 /* Release configuration for PBXNativeTarget "MarsWidgetsExtension" */ = {
+		6F46B683309E386A00674987 /* Release configuration for PBXNativeTarget "GalaxyWidgetsExtension" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -451,8 +453,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = AY5YZ3LB6Y;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = MarsWidgets/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = MarsWidgets;
+				INFOPLIST_FILE = GalaxyWidgets/Configuration/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Galaxy Explorer Widgets";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -491,11 +493,11 @@
 			);
 			defaultConfigurationName = Release;
 		};
-		6F46B681309E386A00674987 /* Build configuration list for PBXNativeTarget "MarsWidgetsExtension" */ = {
+		6F46B681309E386A00674987 /* Build configuration list for PBXNativeTarget "GalaxyWidgetsExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				6F46B682309E386A00674987 /* Debug configuration for PBXNativeTarget "MarsWidgetsExtension" */,
-				6F46B683309E386A00674987 /* Release configuration for PBXNativeTarget "MarsWidgetsExtension" */,
+				6F46B682309E386A00674987 /* Debug configuration for PBXNativeTarget "GalaxyWidgetsExtension" */,
+				6F46B683309E386A00674987 /* Release configuration for PBXNativeTarget "GalaxyWidgetsExtension" */,
 			);
 			defaultConfigurationName = Release;
 		};
