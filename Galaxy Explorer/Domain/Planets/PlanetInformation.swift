@@ -7,4 +7,7 @@ struct PlanetInformation: Identifiable {
     let title: String?
     let summary: String?
     let detail: String?
+    var imageURL: URL? = nil
+    var sourceURL: URL? = nil
+    var credit: String? = nil
 }

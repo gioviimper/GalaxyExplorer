@@ -14,28 +14,15 @@ extension Planet3DView {
 
         // Decorative anchor slots; these are not surveyed landmark coordinates.
         // Keep stable IDs when mapping future NASA content to these slots.
-        static let cardCount = 14
+        static let cardCount = PlanetCardContent.slotCount
         let anchors: [SIMD3<Float>] = (0..<Coordinator.cardCount).map { index in
             let y = 1 - 2 * (Float(index) + 0.5) / Float(Coordinator.cardCount)
             let radius = sqrt(max(0, 1 - y * y))
             let angle = Float(index) * .pi * (3 - sqrt(5))
             return SIMD3<Float>(cos(angle) * radius, y, sin(angle) * radius)
         }
-        // NASA API CONTENT GOES HERE: Supply title, summary, and detail fields by
-        // stable card ID. Cards intentionally contain no bundled editorial text.
-        // Fetch through a content service, cache successful responses for offline use,
-        // and update the UI on the main actor without resetting the scene.
-        struct CardContent {
-            let id: String
-            var title: String?
-            var summary: String?
-            var detail: String?
-        }
-
-        // NASA API CONTENT GOES HERE: Map a different response item to each stable ID.
-        // Keep these fields nil until real API content is available; do not duplicate
-        // one article across every card. Preserve the mapping when the planet rotates.
-        let cardContents: [CardContent]
+        // Each surface slot receives independent NASA media metadata from SwiftUI.
+        var cardContents: [PlanetCardContent]
 
         let lineCanvas = UIView()
         var cards: [UIButton] = []
@@ -94,12 +81,8 @@ extension Planet3DView {
         init(_ parent: Planet3DView) {
             self.parent = parent
             self.lastRequestID = parent.request?.id
-            // NASA API CONTENT GOES HERE: Cache by planet ID and card ID so data stays separate.
-            self.cardContents = (0..<Coordinator.cardCount).map { index in
-                CardContent(
-                    id: String(format: "%@-card-%02d", parent.planet.id, index + 1),
-                    title: nil, summary: nil, detail: nil)
-            }
+            self.cardContents = PlanetCardContent.emptySlots(for: parent.planet.id)
+
         }
         deinit {
             surfaceEngine?.stop(completionHandler: nil)

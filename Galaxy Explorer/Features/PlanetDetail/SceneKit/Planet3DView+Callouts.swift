@@ -19,10 +19,10 @@ extension Planet3DView.Coordinator {
             lines.append(line)
             let card = UIButton(type: .system)
             var config = UIButton.Configuration.filled()
-            // NASA API CONTENT GOES HERE: This slot has its own independent fields.
+            // Content updates keep the same surface slot and scene orientation.
             let content = cardContents[i]
-            config.title = content.title
-            config.subtitle = content.summary
+            config.title = NASAPlanetContentMapper.clip(content.title ?? "", limit: 48)
+            config.subtitle = nil
             card.accessibilityIdentifier = content.id
             card.accessibilityLabel = content.title ?? "Information card \(i + 1)"
             card.accessibilityHint = "Opens information"
@@ -38,7 +38,7 @@ extension Planet3DView.Coordinator {
                 return result
             }
             config.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12)
-            // Leave the visible card empty until NASA content is provided.
+            // Empty slots stay blank while their content is loading.
             config.baseForegroundColor = .label
             config.baseBackgroundColor = parent.planet.cardBackground
             config.background.strokeWidth = 0.75
@@ -46,6 +46,8 @@ extension Planet3DView.Coordinator {
             config.buttonSize = .large
             config.cornerStyle = .medium
             card.configuration = config
+            card.titleLabel?.numberOfLines = 2
+            card.subtitleLabel?.numberOfLines = 1
             card.tag = i
             card.alpha = 0
             card.isUserInteractionEnabled = false
@@ -64,7 +66,8 @@ extension Planet3DView.Coordinator {
         parent.onCardSelected?(
             PlanetInformation(
                 id: content.id, planetName: parent.planet.name,
-                title: content.title, summary: content.summary, detail: content.detail))
+                title: content.title, summary: content.summary, detail: content.detail,
+                imageURL: content.imageURL, sourceURL: content.sourceURL, credit: content.credit))
     }
 
     // TODO(API): Keep all networking and JSON decoding out of this frame callback.

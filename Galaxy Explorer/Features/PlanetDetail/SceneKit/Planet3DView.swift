@@ -6,6 +6,7 @@ import UIKit
 /// The tap callback receives texture UV coordinates (0...1).
 struct Planet3DView: UIViewRepresentable {
     var planet: Planet = .mars
+    var cardContents: [PlanetCardContent] = []
     var hapticsEnabled = true
     var isInteractionEnabled = true
     var request: PlanetViewRequest? = nil
@@ -53,6 +54,7 @@ struct Planet3DView: UIViewRepresentable {
         view.addGestureRecognizer(tap)
 
         coordinator.startImmersion()
+        coordinator.updateContent(cardContents)
         view.setNeedsDisplay()
         return view
     }
@@ -62,6 +64,7 @@ struct Planet3DView: UIViewRepresentable {
         let coordinator = context.coordinator
         let wasEnabled = coordinator.parent.isInteractionEnabled
         coordinator.parent = self
+        coordinator.updateContent(cardContents)
         if !hapticsEnabled { coordinator.stopHaptics() }
         if wasEnabled != isInteractionEnabled {
             if isInteractionEnabled { coordinator.startImmersion() } else { coordinator.stopImmersion() }

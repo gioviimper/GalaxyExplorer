@@ -4,6 +4,7 @@ struct PlanetDetailView: View {
     // The selected configuration drives both the header and the shared 3D scene.
     let planet: Planet
     @State private var information: PlanetInformation?
+    @StateObject private var content = PlanetContentViewModel()
     @State private var viewRequest: PlanetViewRequest?
     @AppStorage("hapticFeedbackEnabled") private var hapticsEnabled = true
 
@@ -13,17 +14,7 @@ struct PlanetDetailView: View {
 
     @Environment(\.dynamicTypeSize) private var typeSize
 
-    // MARK: - Future content API integration
-    // TODO(API): Add a dedicated content service and an observable view model here.
-    // Confirm the provider, endpoint, authentication, response schema, and usage terms.
-    // Map API responses to app-owned models instead of exposing raw JSON to the UI.
-    // Start loading from a cancellable SwiftUI .task; never fetch inside body or layout.
-    // Publish content changes on the main actor and pass card data into Planet3DView.
-    // Keep the bundled facts and card content available on first launch without a network.
-    // Persist the last successful response with its source URL, units, and update date.
-    // On timeout, decoding failure, or no connection, retain cached or bundled content.
-    // Keep loading, empty, and error messages in English; preserve planet interaction.
-
+    // Loading belongs to SwiftUI; gesture and frame callbacks never fetch NASA data.
     var body: some View {
         GeometryReader { geometry in
             if typeSize.isAccessibilitySize {
@@ -46,6 +37,16 @@ struct PlanetDetailView: View {
                 }
             }
         }
+        .task(id: planet.id) { await content.load(for: planet) }
+        .onChange(of: content.cards) { _, cards in
+            guard let selected = information, let card = cards.first(where: { $0.id == selected.id }) else {
+                return
+            }
+            information = PlanetInformation(
+                id: card.id, planetName: planet.name,
+                title: card.title, summary: card.summary, detail: card.detail,
+                imageURL: card.imageURL, sourceURL: card.sourceURL, credit: card.credit)
+        }
         .foregroundStyle(.white)
         .background(.black)
         .preferredColorScheme(.dark)
@@ -57,7 +58,7 @@ struct PlanetDetailView: View {
 
     private var planetView: some View {
         Planet3DView(
-            planet: planet, hapticsEnabled: hapticsEnabled,
+            planet: planet, cardContents: content.cards, hapticsEnabled: hapticsEnabled,
             isInteractionEnabled: information == nil, request: viewRequest,
             onCardSelected: { information = $0 }
         )
@@ -96,6 +97,16 @@ struct PlanetDetailView: View {
             Text(planet.name)
                 .font(.largeTitle.weight(.semibold))
                 .accessibilityAddTraits(.isHeader)
+            if content.isLoading {
+                HStack(spacing: 8) {
+                    ProgressView().controlSize(.small)
+                    Text("Loading NASA content…").font(.caption)
+                }
+                .accessibilityElement(children: .combine)
+            }
+            if let status = content.status {
+                Text(status).font(.caption).foregroundStyle(.secondary)
+            }
             // The Sun and every planet use the same information layout.
             PlanetFactsView(planet: planet)
             Text("Drag to rotate · Pinch to zoom")
