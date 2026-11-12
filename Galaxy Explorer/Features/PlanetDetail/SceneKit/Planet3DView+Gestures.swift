@@ -28,8 +28,10 @@ extension Planet3DView.Coordinator {
             surfaceTravel = 0
             lastSurfacePulse = 0
             if let view = scnView, let planet = planetNode {
-                isDraggingSurface = view.hitTest(gesture.location(in: view), options: [.rootNode: planet])
-                    .contains { $0.node === planet }
+                isDraggingSurface = view.hitTest(
+                    gesture.location(in: view), options: [.rootNode: planet, .categoryBitMask: 1]
+                )
+                .contains { $0.node === planet }
             }
             if isDraggingSurface {
                 prepareSurfaceHaptics()
@@ -178,7 +180,8 @@ extension Planet3DView.Coordinator {
     @objc func handleTap(_ gesture: UITapGestureRecognizer) {
         stopInertia()
         guard let scnView, let planetNode else { return }
-        let hits = scnView.hitTest(gesture.location(in: scnView), options: [.rootNode: planetNode])
+        let hits = scnView.hitTest(
+            gesture.location(in: scnView), options: [.rootNode: planetNode, .categoryBitMask: 1])
         guard let hit = hits.first(where: { $0.node === planetNode }) else { return }
         planetContact()
         // Return texture coordinates rather than Earth-specific geographic regions.

@@ -39,6 +39,7 @@ extension Planet3DView.Coordinator {
     }
 
     @objc func suspendMotion() {
+        setAtmosphereMotionEnabled(false)
         zoomTravel = 0
         lastZoomPulse = 0
         isDraggingSurface = false
@@ -68,6 +69,11 @@ extension Planet3DView.Coordinator {
             calloutLink = link
             link.add(to: .main, forMode: .common)
         }
+        setAtmosphereMotionEnabled(
+            immersionStarted && UIApplication.shared.applicationState == .active
+                && !UIAccessibility.isReduceMotionEnabled
+                && !UIAccessibility.isVoiceOverRunning
+        )
         guard immersionStarted, UIApplication.shared.applicationState == .active,
             !UIAccessibility.isReduceMotionEnabled,
             !UIAccessibility.isVoiceOverRunning,

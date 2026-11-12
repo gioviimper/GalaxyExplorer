@@ -46,6 +46,21 @@ extension Planet3DView.Coordinator {
             config.buttonSize = .large
             config.cornerStyle = .medium
             card.configuration = config
+            card.configurationUpdateHandler = { [weak self] button in
+                guard let self else { return }
+                var configuration = button.configuration ?? .filled()
+                let active = button.isSelected || button.isHighlighted
+                let fill =
+                    active
+                    ? self.parent.planet.cardSelectedBackground : self.parent.planet.cardBackground
+                configuration.baseBackgroundColor = fill
+                configuration.background.backgroundColor = fill
+                configuration.baseForegroundColor =
+                    active
+                    ? self.parent.planet.cardSelectedForeground : .label
+                configuration.background.strokeWidth = active ? 2.5 : 0.75
+                button.configuration = configuration
+            }
             card.titleLabel?.numberOfLines = 2
             card.subtitleLabel?.numberOfLines = 1
             card.tag = i
@@ -63,6 +78,7 @@ extension Planet3DView.Coordinator {
         stopInertia()
         pulse(0.55)
         let content = cardContents[sender.tag]
+        updateSelectedCard(id: content.id)
         parent.onCardSelected?(
             PlanetInformation(
                 id: content.id, planetName: parent.planet.name,
@@ -77,6 +93,14 @@ extension Planet3DView.Coordinator {
         guard let view = scnView, let planet = planetNode, let camera = cameraNode,
             view.window != nil, view.bounds.width > 0, cards.count == anchors.count
         else { return }
+        if !parent.planet.rings.isEmpty {
+            PlanetRingDetail.updateVisibility(
+                on: planet, camera: camera, motionEnabled: automaticAtmosphereMotionAllowed
+            )
+            if PlanetAtmosphereStyle.style(for: parent.planet.id) == .none {
+                setAtmosphereMotionEnabled(automaticAtmosphereMotionAllowed)
+            }
+        }
         lineCanvas.frame = view.bounds
         let centerPoint = view.projectPoint(SCNVector3(planet.simdWorldPosition))
         let edge = view.projectPoint(SCNVector3(planet.simdWorldPosition + SIMD3<Float>(1, 0, 0)))

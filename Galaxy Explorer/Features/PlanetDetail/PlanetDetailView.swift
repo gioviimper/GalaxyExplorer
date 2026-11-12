@@ -4,6 +4,8 @@ struct PlanetDetailView: View {
     // The selected configuration drives both the header and the shared 3D scene.
     let planet: Planet
     @State private var information: PlanetInformation?
+    @State private var selectedCardID: String?
+    @State private var cardPresentationTask: Task<Void, Never>?
     @StateObject private var content = PlanetContentViewModel()
     @State private var viewRequest: PlanetViewRequest?
     @AppStorage("hapticFeedbackEnabled") private var hapticsEnabled = true
@@ -50,17 +52,37 @@ struct PlanetDetailView: View {
         .foregroundStyle(.white)
         .background(.black)
         .preferredColorScheme(.dark)
-        .sheet(item: $information) { item in
-            PlanetInformationView(information: item)
+        .onDisappear {
+            cardPresentationTask?.cancel()
+            cardPresentationTask = nil
+            selectedCardID = nil
+        }
+        .sheet(item: $information, onDismiss: { selectedCardID = nil }) { item in
+            PlanetInformationSheet(information: item)
                 .preferredColorScheme(.dark)
         }
     }
 
     private var planetView: some View {
         Planet3DView(
-            planet: planet, cardContents: content.cards, hapticsEnabled: hapticsEnabled,
-            isInteractionEnabled: information == nil, request: viewRequest,
-            onCardSelected: { information = $0 }
+            planet: planet, cardContents: content.cards, selectedCardID: selectedCardID,
+            hapticsEnabled: hapticsEnabled,
+            isInteractionEnabled: information == nil && cardPresentationTask == nil, request: viewRequest,
+            onCardSelected: { selected in
+                cardPresentationTask?.cancel()
+                selectedCardID = selected.id
+                cardPresentationTask = Task { @MainActor in
+                    // Let the touch feedback appear before the glass panel covers the selected card.
+                    do {
+                        try await Task.sleep(for: .milliseconds(160))
+                    } catch {
+                        return
+                    }
+                    guard !Task.isCancelled else { return }
+                    information = selected
+                    cardPresentationTask = nil
+                }
+            }
         )
         // A different planet gets fresh card IDs, camera state and sensor ownership.
         .id(planet)

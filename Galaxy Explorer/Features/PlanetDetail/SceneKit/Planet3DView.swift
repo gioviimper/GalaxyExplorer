@@ -7,6 +7,7 @@ import UIKit
 struct Planet3DView: UIViewRepresentable {
     var planet: Planet = .mars
     var cardContents: [PlanetCardContent] = []
+    var selectedCardID: String? = nil
     var hapticsEnabled = true
     var isInteractionEnabled = true
     var request: PlanetViewRequest? = nil
@@ -18,7 +19,7 @@ struct Planet3DView: UIViewRepresentable {
     func makeUIView(context: Context) -> SCNView {
         let view = SCNView()
         view.backgroundColor = .black
-        view.antialiasingMode = .multisampling4X
+        view.antialiasingMode = .multisampling2X
         view.autoenablesDefaultLighting = false
         view.allowsCameraControl = false
         view.preferredFramesPerSecond = 60
@@ -55,6 +56,7 @@ struct Planet3DView: UIViewRepresentable {
 
         coordinator.startImmersion()
         coordinator.updateContent(cardContents)
+        coordinator.updateSelectedCard(id: selectedCardID)
         view.setNeedsDisplay()
         return view
     }
@@ -65,6 +67,7 @@ struct Planet3DView: UIViewRepresentable {
         let wasEnabled = coordinator.parent.isInteractionEnabled
         coordinator.parent = self
         coordinator.updateContent(cardContents)
+        coordinator.updateSelectedCard(id: selectedCardID)
         if !hapticsEnabled { coordinator.stopHaptics() }
         if wasEnabled != isInteractionEnabled {
             if isInteractionEnabled { coordinator.startImmersion() } else { coordinator.stopImmersion() }
@@ -77,5 +80,6 @@ struct Planet3DView: UIViewRepresentable {
         coordinator.stopImmersion()
         coordinator.stopInertia()
         uiView.scene = nil
+        coordinator.planetNode = nil
     }
 }
